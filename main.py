@@ -5,9 +5,11 @@ app = Flask(__name__)
 @app.route('/')
 @app.route('/index')
 def index():
-    title = 'dfdsfdsa'
+    title = 'Site'
+    print('start_index')
     return render_template('base.html', title=title)
 
 
 if __name__ == '__main__':
-    app.run(port=8000, host='127.0.0.1')
+    print('start0')
+    app.run(port=8888, host='127.0.0.1')

@@ -41,3 +41,7 @@ header .nav-item a::after{
 header .nav-item a:hover::after{
 	transform: scale(1);
 }
+
+footer .text-center{
+    background-color: #EFEFEF;
+}
