@@ -9,7 +9,7 @@ class RegisterForm(FlaskForm):
     password_again = PasswordField('Повторите пароль', validators=[DataRequired()])
     name = StringField('Имя пользователя', validators=[DataRequired()])
     about = TextAreaField("Немного о себе")
-    user_role = SelectField('Кто вы?', choices=['Первокурсник', 'Второкурсник',
-                                                'Учитель', 'Другое'], default=0)
+    user_role = SelectField('Кто вы?', choices=['Первокурсник ЛАЯ', 'Второкурсник ЛАЯ',
+                                                'Учитель ЛАЯ', 'Другое'], default=0)
     platform = StringField('Платформа обучающегося')
     submit = SubmitField('Войти')
