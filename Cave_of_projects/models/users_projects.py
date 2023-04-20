@@ -3,6 +3,7 @@ from sqlalchemy import orm
 
 from .db_session import SqlAlchemyBase
 
+from .projects import Project
 
 class UserProject(SqlAlchemyBase):
     __tablename__ = 'Users_projects'

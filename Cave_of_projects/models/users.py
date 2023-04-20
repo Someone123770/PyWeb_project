@@ -5,8 +5,10 @@ from sqlalchemy import orm
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from .db_session import SqlAlchemyBase
+
 from .users_settings import UserSettings
-# from .users_projects import UserProject
+from .users_projects import UserProject
+from .change_log import ChangeLog
 
 class User(SqlAlchemyBase):
     __tablename__ = 'Users'
