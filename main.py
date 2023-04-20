@@ -1,5 +1,5 @@
 from flask import Flask, render_template, redirect
-from loginform import LoginForm
+from forms.loginform import LoginForm
 
 app = Flask(__name__)
 
