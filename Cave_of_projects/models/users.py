@@ -30,8 +30,8 @@ class User(SqlAlchemyBase):
     remember_me = sqlalchemy.Column(sqlalchemy.Boolean, default=False)
 
     user_settings = orm.relationship('UserSettings', back_populates='user')
-    # user_projects = orm.relationship('UserProject', back_populates='user')
-    # activity = orm.relationship('ChangeLog', back_populates='user')
+    user_projects = orm.relationship('UserProject', back_populates='user')
+    activity = orm.relationship('ChangeLog', back_populates='user')
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
