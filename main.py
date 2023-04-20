@@ -25,7 +25,7 @@ def login():
 def reg():
     form = RegisterForm()
     if form.validate_on_submit():
-        return redirect('/')
+        return redirect('/login')
     return render_template('registration.html', title='регистрация', form=form)
 
 
