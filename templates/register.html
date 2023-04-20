@@ -41,15 +41,15 @@
         {% endfor %}
     </p>
     <p>
-        {{ form.about.label }}<br>
-        {{ form.about(class="form-control") }}<br>
-        {% for error in form.about.errors %}
+        {{ form.user_role.label }}<br>
+        {{ form.user_role(class="form-control", type="radio") }}<br>
+        {% for error in form.user_role.errors %}
             <p class="alert alert-danger" role="alert">
                 {{ error }}
             </p>
         {% endfor %}
     </p>
-        <p>
+    <p>
         {{ form.platform.label }}<br>
         {{ form.platform(class="form-control") }}<br>
         {% for error in form.platform.errors %}
