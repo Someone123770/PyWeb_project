@@ -1,10 +1,7 @@
-import datetime
-
 from flask import Flask, render_template, redirect
-from werkzeug.security import generate_password_hash
 
 from Cave_of_projects.forms.RegForm import RegisterForm
-from Cave_of_projects.forms.authorisation_form import LoginForm
+from Cave_of_projects.forms.login_form import LoginForm
 from Cave_of_projects.handlers import register_api
 from Cave_of_projects.models.users import User
 from models import db_session
@@ -12,9 +9,6 @@ from flask_login import LoginManager, login_user
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
-app.config['PERMANENT_SESSION_LIFETIME'] = datetime.timedelta(
-    days=365
-)
 
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -24,12 +18,6 @@ login_manager.init_app(app)
 def load_user(user_id):
     db_sess = db_session.create_session()
     return db_sess.query(User).get(user_id)
-
-
-# @app.route("/session_remember/<bool:rem>")  # вероятно, можно убрать
-# def session_remember(rem):
-#     session['remember'] = rem  # а это переместить в обработчик авторизации, в прверку на remember_me
-#     return redirect('/authorisation')
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -70,8 +58,7 @@ def register():
             email=form.email.data,
             about=form.about.data,
             user_role=form.user_role.data,
-            platform=form.platform.data,
-            password_hash=generate_password_hash(form.password.data)
+            platform=form.platform.data
         )
         user.set_password(form.password.data)
         db_sess.add(user)
