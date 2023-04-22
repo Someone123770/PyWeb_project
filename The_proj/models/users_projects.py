@@ -3,7 +3,6 @@ from sqlalchemy import orm
 
 from .db_session import SqlAlchemyBase
 
-from .projects import Project
 
 class UserProject(SqlAlchemyBase):
     __tablename__ = 'Users_projects'
@@ -15,3 +14,4 @@ class UserProject(SqlAlchemyBase):
 
     user = orm.relationship('User')
     project = orm.relationship('Project')
+

@@ -1,38 +1,82 @@
 from flask import Flask, render_template, redirect
+from flask_login import current_user, LoginManager, login_user, login_required, logout_user
 
 from models import db_session
 from models.users import User
 from forms.loginform import LoginForm
 from forms.registerform import RegisterForm
+from forms.post_proj_form import PostProjForm
 
 app = Flask(__name__)
 
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
 
+login_manager = LoginManager()
+login_manager.init_app(app)
+
+
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return redirect("/")
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    db_sess = db_session.create_session()
+    return db_sess.query(User).get(user_id)
+
 
 @app.route('/')
 @app.route('/index')
 def index():
-    print('start_index')
-    # flag = int(input("Зарегистрирован ли пользователь?"))
-    # url_to_img = input("Введите путь к аватарке")
-    return render_template('index.html', flag=0)
+    if current_user.is_authenticated:
+        user = load_user(current_user.get_id())
+        fl = user.role
+    else:
+        fl = 0
+    return render_template('index.html', flag=fl)
+
+
+@app.route('/post-project', methods=['GET', 'POST'])
+def post_project():
+
+    from The_proj.models.projects import Project
+    from The_proj.models.users import User  # THAT'S ESSENTIAL
+
+    form = PostProjForm()
+    if form.validate_on_submit():
+        db_sess = db_session.create_session()
+        proj = Project(
+            project_name=form.name.data,
+            project_type=form.proj_type.data,
+            project_platform=form.platform.data,
+            short_description=form.short_description.data,
+            description=form.detailed_description.data,
+            archive=form.archive.data,  # check this out
+            image=form.image.data  # check this out
+        )
+        db_sess.add(proj)
+        db_sess.commit()
+        return redirect('/')
+    return render_template('post_project.html', title='Выложить проект', form=form)
 
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
     if form.validate_on_submit():
-        return redirect('/')
+        db_sess = db_session.create_session()
+        user = db_sess.query(User).filter(User.email == form.email.data).first()
+        if user and user.check_password(form.password.data):
+            login_user(user, remember=form.remember_me.data)
+            return redirect("/")
+        return render_template('login.html',
+                               message="Неправильный логин или пароль",
+                               form=form)
     return render_template('login.html', title='Авторизация', form=form)
 
-
-# @app.route('/registration', methods=['GET', 'POST'])
-# def reg():
-#     form = RegisterForm()
-#     if form.validate_on_submit():
-#         return redirect('/login')
-#     return render_template('registration.html', title='регистрация', form=form)
 
 @app.route('/registration', methods=['GET', 'POST'])
 def register():
@@ -57,7 +101,8 @@ def register():
         user.set_password(form.password.data)
         db_sess.add(user)
         db_sess.commit()
-        return redirect('/login')
+        login_user(user)
+        return redirect('/index')
     return render_template('registration.html', title='Регистрация', form=form)
 
 
