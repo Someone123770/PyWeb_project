@@ -2,15 +2,18 @@
 
 {% block content %}
 <div class="limiter">
-    <div class="container-login_reg" style="min-height: 100vh;">
-        <div class="wrap-login_reg">
-            <h1>Регистрация</h1>
+    <div class="container-login_reg">
+        <div class="wrap-login_reg" style="margin-top: 100px;">
+            <h3 class="text-dark">Регистрация</h3>
+            {% if message %}
+            <div class="alert alert-warning text-center" role="alert">{{ message }}</div>
+            {% endif %}
             <form action="" method="post">
                 {{ form.hidden_tag() }}
                 <p>
                     {{ form.email.label }}<br>
                     {{ form.email(class="form-control", type="email") }}<br>
-                    {% for error in form.email.errors %}
+                {% for error in form.email.errors %}
                 <p class="alert alert-danger" role="alert">
                     {{ error }}
                 </p>
@@ -71,7 +74,6 @@
                 {% endfor %}
                 </p>
                 <p>{{ form.submit(type="submit", class="btn btn-primary") }}</p>
-                {{message}}
             </form>
         </div>
     </div>
