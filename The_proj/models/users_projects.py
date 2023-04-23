@@ -14,4 +14,3 @@ class UserProject(SqlAlchemyBase):
 
     user = orm.relationship('User')
     project = orm.relationship('Project')
-
