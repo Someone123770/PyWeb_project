@@ -516,7 +516,6 @@ a {
 }
 
 .wrap-with-shadow {
-  width: 500px;
   border-radius: 10px;
   overflow: hidden;
   padding: 55px 55px 55px 55px;

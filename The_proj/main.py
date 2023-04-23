@@ -108,6 +108,15 @@ def register():
         return redirect('/index')
     return render_template('registration.html', title='Регистрация', form=form)
 
+@app.route('/projects')
+def projects():
+    # тестовые значения, в приложении они должны браться из базы данных
+    projects = [{'project_type': 0, 'project_name': 'TimeMenedger', 'date_creation': '24.09.2022', 'platform': 'ГБОУ Школа №1357',
+                 'project_short_description': 'Тут несколько слов о проекте, например какой он крутой и тому подобное'},
+                {'project_type': 2, 'project_name': 'Our Site', 'date_creation': '24.04.2023', 'platform': 'ГБОУ Школа №1357',
+                 'project_short_description': 'Тут несколько слов о проекте, например какой он крутой и тому подобное'}
+                ]
+    return render_template('projects.html', projects=projects)
 
 def main():
     db_session.global_init("db/blogs.db")
