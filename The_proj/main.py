@@ -1,3 +1,4 @@
+import os
 from flask import Flask, render_template, redirect
 from flask_login import current_user, LoginManager, login_user, login_required, logout_user
 
@@ -47,6 +48,8 @@ def post_project():
 
     form = PostProjForm()
     if form.validate_on_submit():
+        print(type(form.image.data))
+        print(form.image.data)
         db_sess = db_session.create_session()
         proj = Project(
             project_name=form.name.data,
@@ -54,8 +57,8 @@ def post_project():
             project_platform=form.platform.data,
             short_description=form.short_description.data,
             description=form.detailed_description.data,
-            archive=form.archive.data,  # check this out
-            image=form.image.data  # check this out
+            # archive=form.archive.data,  # check this out
+            # image=form.image.data  # check this out
         )
         db_sess.add(proj)
         db_sess.commit()
@@ -108,7 +111,7 @@ def register():
 
 def main():
     db_session.global_init("db/blogs.db")
-    app.run()
+    app.run(port=8000, host='127.0.0.1')
 
 
 if __name__ == '__main__':
