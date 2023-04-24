@@ -1,12 +1,17 @@
+# MAKE START.SH, REQUERENMENTS.TXT AND THAT STUFF FILES FOR GLITCH
+
 import os
-from flask import Flask, render_template, redirect
+
+from flask import Flask, render_template, redirect, url_for
 from flask_login import current_user, LoginManager, login_user, login_required, logout_user
+from flask_uploads import UploadSet, IMAGES, configure_uploads, patch_request_class, ARCHIVES
 
 from models import db_session
 from models.users import User
 from forms.loginform import LoginForm
 from forms.registerform import RegisterForm
-from forms.post_proj_form import PostProjForm
+
+from constants import *
 
 app = Flask(__name__)
 
@@ -14,6 +19,26 @@ app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
 
 login_manager = LoginManager()
 login_manager.init_app(app)
+
+# """ for uploading """
+basedir = os.path.abspath(os.path.dirname(__file__))
+
+app.config['UPLOADED_PROJECTSPHOTOS_DEST'] = os.path.join(basedir, 'static/uploads')
+
+projectsphotos = UploadSet('projectsphotos', IMAGES)
+configure_uploads(app, projectsphotos)
+# максимальный размер файла, по умолчанию 16MB
+patch_request_class(app)
+
+
+# IDK why it doesn't work, but further I'll change that (the path remains general)
+app.config['UPLOADED_PROJARCHIVES_DEST'] = os.path.join(basedir, 'static/archives')
+#
+
+projarchives = UploadSet('projectsphotos', ARCHIVES)
+configure_uploads(app, projarchives)
+patch_request_class(app, size=149560024)
+# """ for uploading """
 
 
 @app.route('/logout')
@@ -44,21 +69,26 @@ def index():
 def post_project():
 
     from The_proj.models.projects import Project
-    from The_proj.models.users import User  # THAT'S ESSENTIAL
+    from forms.post_proj_form import PostProjForm
 
     form = PostProjForm()
     if form.validate_on_submit():
-        print(type(form.image.data))
-        print(form.image.data)
+        # saving in /static/...
+        if form.image.data:
+            filename_image = projectsphotos.save(form.image.data)
+        else:
+            filename_image = 'project_default_image.png'
+        filename_archive = projarchives.save(form.archive.data)
+
         db_sess = db_session.create_session()
         proj = Project(
             project_name=form.name.data,
-            project_type=form.proj_type.data,
+            project_type=PROJECTS_TYPES[form.proj_type.data],
             project_platform=form.platform.data,
             short_description=form.short_description.data,
             description=form.detailed_description.data,
-            # archive=form.archive.data,  # check this out
-            # image=form.image.data  # check this out
+            archive=filename_archive,
+            image=filename_image
         )
         db_sess.add(proj)
         db_sess.commit()
@@ -98,7 +128,7 @@ def register():
             user_name=form.name.data,
             email=form.email.data,
             about=form.about.data,
-            user_role=form.user_role.data,
+            user_role=USERS_TYPES[form.user_role.data],
             platform=form.platform.data
         )
         user.set_password(form.password.data)
@@ -108,19 +138,24 @@ def register():
         return redirect('/index')
     return render_template('registration.html', title='Регистрация', form=form)
 
+
 @app.route('/projects')
 def projects():
-    # тестовые значения, в приложении они должны браться из базы данных
-    projects = [{'project_type': 0, 'project_name': 'TimeMenedger', 'date_creation': '24.09.2022', 'platform': 'ГБОУ Школа №1357',
-                 'project_short_description': 'Тут несколько слов о проекте, например какой он крутой и тому подобное'},
-                {'project_type': 2, 'project_name': 'Our Site', 'date_creation': '24.04.2023', 'platform': 'ГБОУ Школа №1357',
-                 'project_short_description': 'Тут несколько слов о проекте, например какой он крутой и тому подобное'}
-                ]
-    return render_template('projects.html', projects=projects)
+    from models.projects import Project
+
+    db_sess = db_session.create_session()
+    projects_a_ds = []
+    for proj in db_sess.query(Project).all():
+        d = {'project_type': proj.project_type, 'project_name': proj.project_name,
+             'date_creation': proj.project_date.date(), 'platform': proj.project_platform,
+             'project_short_description': proj.short_description, 'img': proj.image}
+        projects_a_ds.append(d)
+    return render_template('projects.html', projects=projects_a_ds)
+
 
 def main():
     db_session.global_init("db/blogs.db")
-    app.run(port=8000, host='127.0.0.1')
+    app.run(port='8089', host='127.0.0.1')
 
 
 if __name__ == '__main__':
