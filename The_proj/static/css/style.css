@@ -484,7 +484,7 @@ a {
   margin: 0 auto;
 }
 
-.container-login_reg {
+.some-container {
   width: 100%;
   display: -webkit-box;
   display: -webkit-flex;
@@ -503,7 +503,7 @@ a {
   z-index: 1;
 }
 
-.container-login_reg::before {
+.some-container::before {
   content: "";
   display: block;
   position: absolute;
@@ -515,10 +515,10 @@ a {
   background-color: rgba(255,255,255,0.9);
 }
 
-.wrap-login_reg {
-  width: 500px;
+.wrap-with-shadow {
   border-radius: 10px;
   overflow: hidden;
   padding: 55px 55px 55px 55px;
   box-shadow: 0px 10px 30px 0px rgba(13,12,13,0.2);
+  margin-top: 100px;
 }
