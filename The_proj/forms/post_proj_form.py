@@ -3,7 +3,7 @@ from flask_wtf.file import FileAllowed, FileRequired
 from wtforms import StringField, SubmitField, TextAreaField, SelectField, FileField
 from wtforms.validators import DataRequired
 
-from The_proj.main import projectsphotos
+from The_proj.main import projectsphotos, projarchives
 
 
 class PostProjForm(FlaskForm):
@@ -12,7 +12,8 @@ class PostProjForm(FlaskForm):
     platform = StringField('Платформа')
     short_description = TextAreaField("Краткое описание")
     detailed_description = TextAreaField("Подробное описание")
-    archive = FileField('Архив')
+    archive = FileField('Архив', validators=[FileAllowed(projarchives, 'Image only!'),
+                                             FileRequired('File was empty!')])
     image = FileField('Обложка', validators=[FileAllowed(projectsphotos, 'Image only!'),
-                      FileRequired('File was empty!')])
+                                             FileRequired('File was empty!')])
     submit = SubmitField('Отправить проект')

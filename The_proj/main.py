@@ -1,3 +1,5 @@
+# MAKE START.SH, REQUERENMENTS.TXT AND THAT STUFF FILES FOR GLITCH
+
 import os
 
 from flask import Flask, render_template, redirect
@@ -10,6 +12,8 @@ from forms.loginform import LoginForm
 from forms.registerform import RegisterForm
 
 from constants.constants import *
+
+from datetime import date
 
 app = Flask(__name__)
 
@@ -133,6 +137,20 @@ def register():
         login_user(user)
         return redirect('/index')
     return render_template('registration.html', title='Регистрация', form=form)
+
+
+@app.route('/projects')
+def projects():
+    from models.projects import Project
+
+    db_sess = db_session.create_session()
+    projects_a_ds = []
+    for proj in db_sess.query(Project).all():
+        d = {'project_type': proj.project_type, 'project_name': proj.project_name,
+             'date_creation': proj.project_date.date(), 'platform': proj.project_platform,
+             'project_short_description': proj.short_description}
+        projects_a_ds.append(d)
+    return render_template('projects.html', projects=projects_a_ds)
 
 
 def main():
